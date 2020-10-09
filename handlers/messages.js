@@ -1,5 +1,16 @@
 const db = require('../models');
 
+exports.getMessages = async function(req, res, next) {
+    let user = db.User;
+    await user.findById(req.params.id, "messages")
+                  .sort({ createdAt: "desc" })
+                  .populate("Messages", {
+                    text: true
+                  })
+                  .then(data => res.status(200).json(data))
+                  .catch(err => next(err));
+}
+
 exports.createMessage = async function(req, res, next) {
     try {
         let message = await db.Messages.create({
