@@ -8,6 +8,9 @@ const userSchema = new schema({
         required: true,
         unique: true
     },
+    bio: {
+        type: String
+    },
     username: {
         type: String,
         required: true,
@@ -21,10 +24,22 @@ const userSchema = new schema({
     profileImgUrl: {
         type: String
     },
+    following: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "user"
+        }
+    ],
+    followers: [
+        {
+            type: mongoose.Schema.ObjectId,
+            ref: "user"
+        }
+    ],
     messages: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Messages"
+            ref: "Message"
         }
     ]
 });

@@ -6,6 +6,7 @@ const app = express();
 
 const userAuth = require('./routes/auth');
 const errorHandler = require('./handlers/error');
+const userProfile = require('./routes/userProfile');
 const messages = require('./routes/messages');
 const { loginRequired, ensureCorrectUser } = require('./middlewares/auth');
 const db = require('./models');
@@ -15,6 +16,7 @@ const PORT = 8081;
 app.use(cors());
 app.use(bodyparser.json());
 app.use('/api/auth', userAuth);
+app.use('/api/users/:id', loginRequired, userProfile);
 app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messages);
 app.use('/api/messages', loginRequired, async function(req, res, next) {
     db.Messages.find({})
