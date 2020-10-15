@@ -4,7 +4,7 @@ const { getMessages, userFollow, userUnfollow, likeMessage, unlikeMessage } = re
 
 
 router.get('/',getMessages);
-router.route('message/:messageId/like')
+router.route('/message/:messageId/like')
             .post(likeMessage)
             .delete(unlikeMessage);
 router.route('/follow/:id2')
