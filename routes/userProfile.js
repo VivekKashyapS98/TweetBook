@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const { getMessages, userFollow, userUnfollow } = require('../handlers/userProfile');
+const { getMessages, userFollow, userUnfollow, likeMessage, unlikeMessage } = require('../handlers/userProfile');
+
 
 router.get('/',getMessages);
-router.route('/:id2')
+router.route('message/:messageId/like')
+            .post(likeMessage)
+            .delete(unlikeMessage);
+router.route('/follow/:id2')
             .post(userFollow)
-            .delete(userUnfollow)
+            .delete(userUnfollow);
 
 module.exports = router;
