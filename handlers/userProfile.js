@@ -1,10 +1,19 @@
 const db = require('../models');
 
+exports.updateProfile = async function(req, res, next) {
+    await db.User.findByIdAndUpdate(req.params.id, req.body)
+                    .then(() => res.status(200).json({message: "Updated!"}))
+                    .catch(err => next(err));
+}
+
 exports.likeMessage = async function(req, res, next) {
     try {
         let message = await db.Messages.findById(req.params.messageId);
         message.likes.push(req.params.id);
         await message.save();
+        let user = await db.User.findById(req.params.id);
+        user.likes.push(req.params.messageId);
+        await user.save();
         return res.status(200).json({message: "liked"});
     } catch (err) {
         return next(err);
@@ -16,6 +25,9 @@ exports.unlikeMessage = async function(req, res, next) {
         let message = await db.Messages.findById(req.params.messageId);
         message.likes.pop(req.params.id);
         await message.save();
+        let user = await db.User.findById(req.params.id);
+        user.likes.pop(req.params.messageId);
+        await user.save();
         return res.status(200).json({message: "unliked"});
     } catch (err) {
         return next(err);
@@ -27,7 +39,9 @@ exports.getMessages = async function(req, res, next) {
     await user.findById(req.params.id, ["username", "bio", "following", "followers", "messages"])
                   .sort({ createdAt: "desc" })
                   .populate("messages", {
-                    text: true
+                    text: true,
+                    updatedAt: true,
+                    user: true
                   })
                   .populate("followers", {
                       username: true,

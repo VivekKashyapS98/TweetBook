@@ -23,7 +23,6 @@ const messageSchema = new Schema({
 messageSchema.pre("deleteOne", { document: true }, async function(next) {
     try {
         let user = await User.findById(this.user);
-        console.log(this.user);
         user.messages.pull(this.id);
         await user.save();
         return next();
