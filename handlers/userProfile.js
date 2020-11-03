@@ -36,12 +36,13 @@ exports.unlikeMessage = async function(req, res, next) {
 
 exports.getMessages = async function(req, res, next) {
     let user = db.User;
-    await user.findById(req.params.id, ["username", "bio", "following", "followers", "messages"])
+    await user.findById(req.params.id, ["username", "bio", "profileImgUrl", "following", "followers", "messages"])
                   .sort({ createdAt: "desc" })
                   .populate("messages", {
                     text: true,
                     updatedAt: true,
-                    user: true
+                    user: true,
+		            likes: true
                   })
                   .populate("followers", {
                       username: true,
@@ -50,7 +51,7 @@ exports.getMessages = async function(req, res, next) {
                   .populate("following", {
                     username: true,
                     profileImgUrl: true
-                })
+                  })
                   .then(data => res.status(200).json(data))
                   .catch(err => next(err));
 }

@@ -15,6 +15,7 @@ const PORT = 8081;
 
 app.use(cors());
 app.use(bodyparser.json());
+app.use(express.static('public'));
 app.use('/api/auth', userAuth);
 app.use('/api/users/:id', loginRequired, userProfile);
 app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messages);
