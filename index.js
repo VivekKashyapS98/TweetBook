@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
 const bodyparser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 const userAuth = require('./routes/auth');
@@ -12,16 +12,11 @@ const messages = require('./routes/messages');
 const { loginRequired, ensureCorrectUser } = require('./middlewares/auth');
 const db = require('./models');
 
-const PORT = 8081;
+const PORT = process.env.PORT || 8081;
 
 app.use(cors());
 app.use(bodyparser.json());
-app.use(express.static(path.join(__dirname,'public')));
-
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/auth', userAuth);
 app.use('/api/users/:id', loginRequired, userProfile);
 app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messages);
@@ -34,6 +29,10 @@ app.use('/api/messages', loginRequired, async function(req, res, next) {
                 })
                 .then(data => res.status(200).json(data))
                 .catch(err => next(err));
+});
+
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.use((req, res, next) => {
