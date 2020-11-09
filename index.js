@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const bodyparser = require('body-parser');
 const cors = require('cors');
 const app = express();
@@ -15,7 +16,12 @@ const PORT = 8081;
 
 app.use(cors());
 app.use(bodyparser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname,'public')));
+
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 app.use('/api/auth', userAuth);
 app.use('/api/users/:id', loginRequired, userProfile);
 app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messages);
