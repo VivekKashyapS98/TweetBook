@@ -50,8 +50,10 @@ const userSchema = new schema({
     ],
     notifications: [
         {
-            type: String,
-            read: false
+            text: {
+		type: String
+	    },
+	    read: false
         }
     ]
 });
