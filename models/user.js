@@ -51,9 +51,12 @@ const userSchema = new schema({
     notifications: [
         {
             text: {
-		type: String
-	    },
-	    read: false
+                type: String
+            },
+            read: {
+                type: Boolean,
+                default: false
+            }
         }
     ]
 });
