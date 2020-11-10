@@ -31,8 +31,12 @@ app.use('/api/messages', loginRequired, async function(req, res, next) {
                 .catch(err => next(err));
 });
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.get('/*', function (req, res, next) {
+  try {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.use((req, res, next) => {

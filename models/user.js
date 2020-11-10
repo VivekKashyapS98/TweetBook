@@ -47,6 +47,12 @@ const userSchema = new schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Message"
         }
+    ],
+    notifications: [
+        {
+            type: String,
+            read: false
+        }
     ]
 });
 
