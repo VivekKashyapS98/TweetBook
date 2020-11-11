@@ -16,16 +16,17 @@ exports.getNotifications = async function(req, res, next) {
 exports.markNotifications = async function(req, res, next) {
     try {
         let user = db.User.findById(req.params.id);
-        try {
+        if(user.notifications && user.notifications.length > 0) {
             let newNotify = user.notifications.map(item => {
                 return {...item, read: true};
             });
             user.notifications = [...newNotify];
             await user.save();
-            return res.status(200).json({message: "Notifications marked read..."});
-        } catch (err) {
+	        return res.status(200).json({message: "Notifications marked read..."});
+        } else {
             return res.status(200).json({message: "Notifications are empty..."});
         }
+        
     } catch (err){
         next(err);
     }

@@ -51,7 +51,15 @@ const userSchema = new schema({
     notifications: [
         {
             text: {
+                type: String,
+                required: true
+            },
+            messages: {
                 type: String
+            },
+            date: {
+                type: Date,
+                required: true
             },
             read: {
                 type: Boolean,
