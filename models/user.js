@@ -54,7 +54,7 @@ const userSchema = new schema({
                 type: String,
                 required: true
             },
-            messages: {
+            message: {
                 type: String
             },
             date: {

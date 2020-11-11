@@ -2,8 +2,7 @@ const db = require('../models');
 
 const getDate = () => {
     let d = new Date();
-    let n = d.toDateString();
-    return n;
+    return d;
 }
 
 exports.notifyLike = async function(messageId, likedUserId) {
