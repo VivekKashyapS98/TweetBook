@@ -51,5 +51,8 @@ func CreateUser(userData newUser, dbs *mongo.Database) (*mongo.InsertOneResult, 
 		"email":    userData.Email,
 		"password": hashed,
 	})
+	if err != nil {
+		return nil, err
+	}
 	return res, nil
 }
