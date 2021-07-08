@@ -32,7 +32,7 @@ func main() {
 		log.Fatal(err)
 	}
 	dbs := client.Database("TweetBook")
-	collection := dbs.Collection("messages")
+	collection := dbs.Collection("users")
 
 	cur, err := collection.Find(context.Background(), bson.D{})
 	if err != nil {
@@ -40,7 +40,7 @@ func main() {
 	}
 	defer cur.Close(context.Background())
 
-	var results []db.Message
+	var results []db.User
 
 	if err = cur.All(context.Background(), &results); err != nil {
 		log.Fatal(err)
