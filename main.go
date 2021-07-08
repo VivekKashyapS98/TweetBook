@@ -2,13 +2,12 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"os"
-	"time"
 
 	"github.com/VivekKashyapS98/TweetBook/db"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,16 +20,19 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
-	defer cancel()
+	// create a new context
+	ctx := context.Background()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(os.Getenv("MONGO_URI")))
-
+	// create a mongo client
+	client, err := mongo.Connect(
+		ctx,
+		options.Client().ApplyURI(os.Getenv("MONGO_URI")),
+	)
 	if err != nil {
-		log.Fatal("Can't connect to MongoDB Atlas!...", err)
+		log.Fatal(err)
 	}
-
-	collection := client.Database("TweetBook").Collection("users")
+	dbs := client.Database("TweetBook")
+	collection := dbs.Collection("messages")
 
 	cur, err := collection.Find(context.Background(), bson.D{})
 	if err != nil {
@@ -38,19 +40,17 @@ func main() {
 	}
 	defer cur.Close(context.Background())
 
-	var results []db.User
+	var results []db.Message
 
 	if err = cur.All(context.Background(), &results); err != nil {
 		log.Fatal(err)
 	}
 
 	app := fiber.New()
-	res, err := json.Marshal(results)
-	if err != nil {
-		log.Fatal(err)
-	}
+	app.Use(cors.New())
+	app.Static("/", "./public")
 
-	log.Printf("%s", res)
+	// api := app.Group("/api")
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(results)
