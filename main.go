@@ -5,11 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/VivekKashyapS98/TweetBook/db"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -32,19 +30,6 @@ func main() {
 		log.Fatal(err)
 	}
 	dbs := client.Database("TweetBook")
-	collection := dbs.Collection("users")
-
-	cur, err := collection.Find(context.Background(), bson.D{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer cur.Close(context.Background())
-
-	var results []db.User
-
-	if err = cur.All(context.Background(), &results); err != nil {
-		log.Fatal(err)
-	}
 
 	app := fiber.New()
 	app.Use(cors.New())
@@ -53,7 +38,7 @@ func main() {
 	// api := app.Group("/api")
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).JSON(results)
+		return c.Status(fiber.StatusOK).SendString("Hello World!")
 	})
 
 	app.Listen(":8000")

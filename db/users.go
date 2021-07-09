@@ -44,7 +44,7 @@ type updateUser struct {
 	profileImgUrl string
 }
 
-func CreateUser(userData newUser, dbs *mongo.Database) (*mongo.InsertOneResult, error) {
+func CreateUser(userData *newUser, dbs *mongo.Database) (*mongo.InsertOneResult, error) {
 	users := dbs.Collection("users")
 	hashed, err := bcrypt.GenerateFromPassword([]byte(userData.password), 10)
 	if err != nil {
@@ -64,7 +64,7 @@ func CreateUser(userData newUser, dbs *mongo.Database) (*mongo.InsertOneResult, 
 	return res, nil
 }
 
-func UpdateUser(userData updateUser, dbs *mongo.Database) (*mongo.UpdateResult, error) {
+func UpdateUser(userData *updateUser, dbs *mongo.Database) (*mongo.UpdateResult, error) {
 	users := dbs.Collection("users")
 
 	update := func() bson.M {
@@ -81,4 +81,18 @@ func UpdateUser(userData updateUser, dbs *mongo.Database) (*mongo.UpdateResult, 
 		return nil, err
 	}
 	return res, nil
+}
+
+func GetUserByEmail(email *string, dbs *mongo.Database) (*User, error) {
+	users := dbs.Collection("users")
+	filter := bson.M{"email": bson.M{"$elemMatch": bson.M{"$eq": email}}}
+
+	var user User
+
+	err := users.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, err
 }
