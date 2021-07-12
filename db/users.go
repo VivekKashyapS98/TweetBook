@@ -96,3 +96,35 @@ func GetUserByEmail(email *string, dbs *mongo.Database) (*User, error) {
 
 	return &user, err
 }
+
+func GetTweetsByUserId(id *string, dbs *mongo.Database) (*User, *[]Message, error) {
+	users := dbs.Collection("users")
+	filter := bson.M{"_id": bson.M{"$elemMatch": bson.M{"$eq": id}}}
+
+	var user User
+
+	err := users.FindOne(context.TODO(), filter).Decode(&user)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	tweets := make([]Message, len(user.Messages))
+
+	for _, message := range user.Messages {
+		res, err := getMessagebyId(&message, dbs)
+		if err != nil {
+			return nil, nil, err
+		}
+		tweets = append(tweets, *res)
+	}
+
+	return &user, &tweets, err
+}
+
+func getMessagebyId(id *string, dbs *mongo.Database) (*Message, error) {
+	message, err := GetMessage(id, dbs)
+	if err != nil {
+		return nil, err
+	}
+	return message, nil
+}
