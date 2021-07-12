@@ -36,3 +36,15 @@ func GetAllMessages(dbs *mongo.Database) (*[]Message, error) {
 	}
 	return &tweets, nil
 }
+
+func GetMessage(id *string, dbs *mongo.Database) (*Message, error) {
+	messages := dbs.Collection("messages")
+
+	var message Message
+
+	err := messages.FindOne(context.TODO(), bson.D{{"_id", id}}).Decode(&message)
+	if err != nil {
+		return nil, err
+	}
+	return &message, nil
+}
